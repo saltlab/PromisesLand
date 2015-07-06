@@ -1,0 +1,18 @@
+{
+  "name": "promisesland",
+  "description": "Refactoring Error-First Protocol to Promises",
+  "license": "MIT",
+  "author": "Keheliya Gallaba <keheliya.gallaba@gmail.com>",
+  "version": "0.0.1",
+  "repository": {},
+  "dependencies": {
+    "compare-ast": "^0.2.0"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "source",
+    "error-first callbacks",
+    "promises"
+  ],
+  "scripts": {}
+}
