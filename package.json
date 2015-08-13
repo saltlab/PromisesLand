@@ -6,7 +6,13 @@
   "version": "0.0.1",
   "repository": {},
   "dependencies": {
-    "compare-ast": "^0.2.0"
+    "argparse": "~0.1.15",
+    "compare-ast": "^0.2.0",
+    "es6-promisify": "^2.0.0",
+    "escodegen": "~0.0.15",
+    "escope": "~0.0.13",
+    "esprima": "~1.0.2",
+    "estraverse": "~0.0.4"
   },
   "devDependencies": {},
   "keywords": [
