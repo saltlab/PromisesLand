@@ -9,6 +9,7 @@ var promisify = require("es6-promisify");
 ArgumentParser = require('argparse').ArgumentParser;
 
 var funcsToNodify = [];
+var convert_count = 0;
 
 var argParser = new ArgumentParser({
     addHelp: true,
@@ -74,10 +75,11 @@ function hasNodeCallback(node) {
     return node.type === "CallExpression" &&
         args.length &&
         args[args.length - 1].type === "FunctionExpression" &&
-        args[args.length - 1].params.length === 2 && /err/.test(args[args.length - 1].params[0].name);
+        args[args.length - 1].params.length <= 4 && args[args.length - 1].params.length != 0 && /err/.test(args[args.length - 1].params[0].name);
 }
 
 function replaceNodeCallback(node) {
+    console.log('going to replace...');
     // the called function
     var func = node;
     old_callee_backup = node.callee;
@@ -108,6 +110,8 @@ function replaceNodeCallback(node) {
         new_id += func_name_suffix
 
     }
+    console.log(new_id);
+    convert_count++;
 
     node.callee = {
         type: 'Identifier',
@@ -534,6 +538,6 @@ template = 'function(err,data){\n\
                     resolve(data);\n\
                 }'
 var str_replaced = suffix.replace(/g5k3d9/g, template);
-
+console.log(''+convert_count+' instances converted.');
 //funcsToNodify.forEach(Nodify);
 console.log(str_replaced);
