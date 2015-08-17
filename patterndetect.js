@@ -16,57 +16,39 @@ var argParser = new ArgumentParser({
 });
 
 argParser.addArgument(
-    [ '-d','--directory' ],
-    { nargs: 0,
-        help: 'give directory path' }
+    ['-d', '--directory'],
+    {
+        nargs: 0,
+        help: 'give directory path'
+    }
 );
 
 argParser.addArgument(
-    [ '-p','--pkgs' ],
-    { nargs: 0,
-        help: 'analyze pkgs as well' }
+    ['-p', '--pkgs'],
+    {
+        nargs: 0,
+        help: 'analyze pkgs as well'
+    }
 );
 
 argParser.addArgument(
-    [ '-s','--suffix' ],
-    { nargs: 0,
+    ['-s', '--suffix'],
+    {
+        nargs: 0,
         help: 'suffix for refactored function names',
-        defaultValue: 'Promised' }
+        defaultValue: 'Promised'
+    }
 );
-
-
 
 argParser.addArgument(
-    [ '-t','--type' ],
-    { help: 'Should be one of npm, hybrid'}
+    ['-t', '--type'],
+    {help: 'Should be one of npm, hybrid'}
 );
-
 
 var r = argParser.parseKnownArgs();
 var args = r[0],
     func_name_suffix = args.suffix,
     files = r[1];
-
-template = 'system.call(input, function cbfunc(err, result) {\
-                    if (!err) {\
-                        callback(null,addresses[0]);\
-                    } else {\
-                        callback(err);\
-                    }\
-                });'
-sourceCode = 'dns.resolve4(host, function resolve4Cb(err, addresses) {\
-                    if (!err) {\
-                        callback(null,addresses[0]);\
-                    } else {\
-                        callback(err);\
-                    }\
-                });'
-
-//console.log(compareAst(
-//			template,
-//			sourceCode,
-//			{ varPattern: /\S*/ }
-//		));
 
 path = files[0];
 
@@ -74,14 +56,14 @@ var text = fs.readFileSync(path, "utf8");
 
 function curry(fn) {
     var args = Array.prototype.slice.call(arguments, 1);
-    return function() {
-        return fn.apply(this, args.concat(
-            Array.prototype.slice.call(arguments)));
+    return function () {
+        result = args.concat(Array.prototype.slice.call(arguments));
+        return fn.apply(this, result);
     };
 }
 
 function callbackReplacer(matcher, replacer, node) {
-    if(matcher(node)) {
+    if (matcher(node)) {
         // create a call to .then()
         return replacer(node);
     }
@@ -92,14 +74,49 @@ function hasNodeCallback(node) {
     return node.type === "CallExpression" &&
         args.length &&
         args[args.length - 1].type === "FunctionExpression" &&
-        args[args.length - 1].params.length === 2;
+        args[args.length - 1].params.length === 2 && /err/.test(args[args.length - 1].params[0].name);
 }
 
 function replaceNodeCallback(node) {
     // the called function
     var func = node;
-    funcsToNodify.push(func.callee.name);
-    func.callee.name += func_name_suffix;
+    old_callee_backup = node.callee;
+    var new_id='';
+
+    if(func.callee.name) {
+        if (funcsToNodify.indexOf(func.callee.name) < 0) {
+            funcsToNodify.push(func.callee.name);
+        }
+        new_id = func.callee.name + func_name_suffix;
+
+
+    } else{
+        var new_node = {
+            "type": "CallExpression",
+            "callee": node.callee,
+            "arguments": []
+        };
+        var old_id = print_node(new_node).slice(0,-2);
+
+        if (old_id.indexOf("(") > -1){
+            return node;
+        }
+
+        var new_id = old_id.replace(/\./g , "_");
+
+        funcsToNodify.push(new_id);
+        new_id += func_name_suffix
+
+    }
+
+    node.callee = {
+        type: 'Identifier',
+        name: new_id
+    };
+
+
+
+
     // arguments to called function
     var args = func.arguments;
     // the last argument is the callback we need to turn into promise
@@ -107,7 +124,7 @@ function replaceNodeCallback(node) {
     var callback = args.pop();
 
     // TODO retain comments
-    return {
+    new_result = {
         "type": "CallExpression",
         "callee": {
             "type": "MemberExpression",
@@ -120,6 +137,9 @@ function replaceNodeCallback(node) {
         },
         "arguments": callbackToThenArguments(callback)
     };
+    new_result.$track = old_callee_backup;
+    new_result.$track.$arg_length = func.arguments.length;
+    return new_result;
 }
 
 function callbackToThenArguments(callback) {
@@ -137,7 +157,7 @@ function callbackToThenArguments(callback) {
 
 function getErrorHandler(callback, errorArg) {
     var errorArgName = errorArg.name;
-    if (callback.body.type === 'BlockStatement') {
+    if (callback.body.type === "BlockStatement") {
         var body = callback.body.body;
         for (var i = 0, len = body.length; i < len; i++) {
             // Only matches
@@ -145,7 +165,7 @@ function getErrorHandler(callback, errorArg) {
             // TODO: think about matching if (err !== null) and others
             if (
                 body[i].type === "IfStatement" &&
-                body[i].test.type === 'Identifier' &&
+                body[i].test.type === "Identifier" &&
                 body[i].test.name === errorArgName
             ) {
                 var handler = body.splice(i, 1)[0].consequent;
@@ -177,7 +197,15 @@ function getErrorHandler(callback, errorArg) {
 
 
 function thenFlattener(node) {
+    setParent(node);
+    if(node.$track)
+    {
+        var block = getEnclosingBlock(node);
+        var synth_node = synthesizeNode(node.$track);
+        block.body.unshift(synth_node);
+    }
     if (isThenCallWithThenCallAsLastStatement(node)) {
+
         var resolvedFn = node.arguments[0];
         var body = resolvedFn.body.body;
         var lastStatement = body[body.length - 1];
@@ -200,6 +228,7 @@ function thenFlattener(node) {
         // List of all the identifiers used that were not defined in the
         // resolvedFn scope
         var parentIdentifiers = root.scopes[1].through;
+
         // List of all the identifiers used that were not defined in the `then`
         // resolved handler scope
         var resolveIdentifiers = root.acquire(thenArguments[0]).through;
@@ -223,6 +252,7 @@ function thenFlattener(node) {
             }
         }
 
+
         // Change last statement to just return the function call
         body[body.length - 1] = {
             type: "ReturnStatement",
@@ -233,7 +263,7 @@ function thenFlattener(node) {
         // Wrap the outer function call in a MemberExpression, so that we can
         // call then(thenArguments) on the result (which is the return value,
         // which is the return value of functionCall)
-        return thenFlattener({
+        new_result = {
             type: "CallExpression",
             callee: {
                 type: "MemberExpression",
@@ -245,7 +275,9 @@ function thenFlattener(node) {
                 }
             },
             arguments: thenArguments
-        });
+        };
+
+        return thenFlattener(new_result);
     } else {
         return node;
     }
@@ -296,38 +328,191 @@ function doesMatch(object, matchObject) {
         return object === matchObject;
     }
 
-    return Object.keys(matchObject).every(function(prop) {
+    return Object.keys(matchObject).every(function (prop) {
         return doesMatch(object[prop], matchObject[prop]);
     });
 }
 
-var convert = function(code) {
+var convert = function (code) {
 
     // Parse
-    var ast = esprima.parse(code, {  loc: true,
+    var ast = esprima.parse(code, {
+        loc: true,
         range: true,
         raw: true,
         tokens: true,
-        comment: true });
+        comment: true
+    });
 
     // Add comments to nodes.
     ast = escodegen.attachComments(ast, ast.comments, ast.tokens);
 
 
     estraverse.replace(ast, {
-        leave: curry(callbackReplacer,  hasNodeCallback, replaceNodeCallback)
+        leave: curry(callbackReplacer, hasNodeCallback, replaceNodeCallback)
     });
     estraverse.replace(ast, {
         enter: thenFlattener
     });
 
     // generate
-    return escodegen.generate(ast, { parse: esprima.parse, comment: true });
+    return escodegen.generate(ast, {parse: esprima.parse, comment: true});
 };
+
+function setParent(node) {
+    //console.dir('setting parent')
+    for (var k in node) {
+        if (!node.hasOwnProperty(k))
+            continue;
+        if (k[0] === '$')
+            continue;
+        var val = node[k];
+        if (!val)
+            continue;
+        if (typeof val === "object" && typeof val.type === "string") {
+            node[k].$parent = node;
+            //console.dir('seta parent')
+            //print_node_info(node[k])
+        }
+        else if (val instanceof Array) {
+            for (var i=0; i<val.length; i++) {
+                var elm = val[i];
+                if (elm != null && typeof elm === "object" && typeof elm.type === "string") {
+                    val[i].$parent = node;
+                    //console.dir('setb parent')
+                    //print_node_info(val[i])
+                }
+            }
+        }
+    }
+}
+
+// Returns the block or program immediately enclosing the given node, possibly the node itself.
+function getEnclosingBlock(node) {
+    while  (node.type !== 'BlockStatement' &&
+    node.type !== 'Program') {
+        node = node.$parent;
+    }
+    return node;
+}
+
+function synthesizeNode(node) {
+    var new_params = [];
+    var new_args = [];
+
+    for (var i = 0; i<node.$arg_length;i++){
+        var new_variable = {
+            "type": "Identifier",
+            "name": "param"+i
+        };
+        new_params.push(new_variable);
+        new_args.push(new_variable);
+    }
+
+    new_args.push({
+        "type": "Identifier",
+        "name": "g5k3d9"
+    });
+
+    new_node = {
+        "type": "FunctionDeclaration",
+        "id": {
+            "type": "Identifier",
+            "name": "req_collection_findOnePromised"
+        },
+        "params": new_params,
+        "defaults": [],
+        "body": {
+            "type": "BlockStatement",
+            "body": [
+                {
+                    "type": "ReturnStatement",
+                    "argument": {
+                        "type": "NewExpression",
+                        "callee": {
+                            "type": "Identifier",
+                            "name": "Promise"
+                        },
+                        "arguments": [
+                            {
+                                "type": "FunctionExpression",
+                                "id": null,
+                                "params": [
+                                    {
+                                        "type": "Identifier",
+                                        "name": "resolve"
+                                    },
+                                    {
+                                        "type": "Identifier",
+                                        "name": "reject"
+                                    }
+                                ],
+                                "defaults": [],
+                                "body": {
+                                    "type": "BlockStatement",
+                                    "body": [
+                                        {
+                                            "type": "ExpressionStatement",
+                                            "expression": {
+                                                "type": "CallExpression",
+                                                "callee": node,
+                                                "arguments": new_args
+                                            }
+                                        }
+                                    ]
+                                },
+                                "generator": false,
+                                "expression": false
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "generator": false,
+        "expression": false
+    };
+
+    if(node.name) {
+        new_node.id = {
+            "type": "Identifier",
+            "name": node.name
+        }
+
+       // func.callee.name += func_name_suffix;
+    } else {
+        var pseudo_node = {
+            "type": "CallExpression",
+            "callee": node,
+            "arguments": []
+        };
+        var old_id = print_node(pseudo_node).slice(0, -2);
+        old_id = old_id.replace(/\./g , "_");
+        new_node.id = {
+            "type": "Identifier",
+            "name": old_id
+        }
+    }
+    new_node.id.name += func_name_suffix;
+    return new_node;
+}
+
+function print_node(node) {
+    var str = "" + escodegen.generate(node, {parse: esprima.parse, comment: true})
+    return str
+}
+
+function print_node_info(node) {
+    var str = node.type;
+    if (node.loc) {
+        str = str + '-' + node.loc.start.line + '-' + node.loc.start.column + '-' + node.loc.end.line + '-' + node.loc.end.column;
+    }
+    console.log(str);
+}
 
 function Nodify(value, index, ar) {
 
-    var template = '\nfunction x5v2'+func_name_suffix+'(param){\n\
+    var template = '\nfunction x5v2' + func_name_suffix + '(param){\n\
         return new Promise(function(resolve,reject){\n\
             x5v2(param,function(err,data){\n\
                 if(err !== null)\n\
@@ -343,5 +528,12 @@ function Nodify(value, index, ar) {
 
 var suffix = convert(text);
 
-funcsToNodify.forEach(Nodify);
-console.log(suffix);
+template = 'function(err,data){\n\
+                    if(err !== null)\n\
+                        return reject(err);\n\
+                    resolve(data);\n\
+                }'
+var str_replaced = suffix.replace(/g5k3d9/g, template);
+
+//funcsToNodify.forEach(Nodify);
+console.log(str_replaced);

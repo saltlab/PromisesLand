@@ -4,6 +4,7 @@ function renderTweetsFlow() {
             console.error(errA);
             return;
         }
+        console.log('success happened');
         getTweets(valueA, function (errB, valueB) {
             console.log(valueB);
         });
