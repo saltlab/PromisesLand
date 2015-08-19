@@ -1,0 +1,36 @@
+/Users/keheliya/dev/PromisesLand/subject_systems/compatible exists.
+
+> express-endpoint@1.2.11 test /Users/keheliya/dev/PromisesLand/subject_systems/compatible/node_modules/express-endpoint
+> mocha
+
+
+> gifsockets-server@0.38.1 test /Users/keheliya/dev/PromisesLand/subject_systems/compatible/node_modules/gifsockets-server
+> mocha
+
+
+> heroku-bouncer@4.0.1 test /Users/keheliya/dev/PromisesLand/subject_systems/compatible/node_modules/heroku-bouncer
+> mocha
+
+
+> mongoose@3.9.7 test /Users/keheliya/dev/PromisesLand/subject_systems/compatible/node_modules/mongoose
+> set MONGOOSE_DISABLE_STABILITY_WARNING=1 && mocha --async-only test/*.test.js
+
+
+> moonridge@0.6.9 test /Users/keheliya/dev/PromisesLand/subject_systems/compatible/node_modules/moonridge
+> mocha
+
+
+> slack-integrator@0.0.6 test /Users/keheliya/dev/PromisesLand/subject_systems/compatible/node_modules/slack-integrator
+> mocha
+
+
+> timbits@0.7.3 test /Users/keheliya/dev/PromisesLand/subject_systems/compatible/node_modules/timbits
+> mocha
+
+2015-08-19T16:22:46.531Z - [32minfo[39m: Placing cherry in the box
+2015-08-19T16:22:46.536Z - [32minfo[39m: Placing chocolate in the box
+2015-08-19T16:22:46.539Z - [32minfo[39m: Placing dutchie in the box
+2015-08-19T16:22:46.541Z - [32minfo[39m: Placing plain in the box
+2015-08-19T16:22:46.543Z - [32minfo[39m: Placing post in the box
+
+Press Ctrl+C to Exit

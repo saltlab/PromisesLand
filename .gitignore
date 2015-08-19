@@ -1,3 +1,7 @@
+#Project specific #
+###################
+*.log
+
 #Node.js specific #
 ###################
 node_modules

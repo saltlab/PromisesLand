@@ -1,9 +1,0 @@
-git@github.com:lean-stack/node.tingo-rest.git
-git@github.com:Postmedia/timbits.git
-git@github.com:way2-technology/slack-integrator.git
-git@github.com:catyphram/redis_key_overview.git
-git@github.com:capaj/Moonridge.git
-git@github.com:heroku/node-heroku-bouncer.git
-git@github.com:twolfson/gifsockets.git
-git@github.com:dokipen/express-endpoint.git
-git@github.com:twilson63/express-couchUser.git
