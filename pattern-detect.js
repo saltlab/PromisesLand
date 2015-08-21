@@ -33,11 +33,27 @@ argParser.addArgument(
 );
 
 argParser.addArgument(
+    ['-c', '--chains'],
+    {
+        nargs: 0,
+        help: 'flatten nested callbacks to chains'
+    }
+);
+
+argParser.addArgument(
     ['-s', '--suffix'],
     {
         nargs: 0,
         help: 'suffix for refactored function names',
         defaultValue: 'Promised'
+    }
+);
+
+argParser.addArgument(
+    ['-e', '--errorfirst'],
+    {
+        nargs: 0,
+        help: 'check only for error first',
     }
 );
 
@@ -49,6 +65,8 @@ argParser.addArgument(
 var r = argParser.parseKnownArgs();
 var args = r[0],
     func_name_suffix = args.suffix,
+    flatten_chains = args.chains,
+    check_only_error_first = args.errorfirst,
     files = r[1];
 
 path = files[0];
@@ -75,7 +93,7 @@ function hasNodeCallback(node) {
     return node.type === "CallExpression" &&
         args.length &&
         args[args.length - 1].type === "FunctionExpression" &&
-        args[args.length - 1].params.length <= 4 && args[args.length - 1].params.length != 0 && /err/.test(args[args.length - 1].params[0].name);
+        args[args.length - 1].params.length <= 4 && args[args.length - 1].params.length != 0 && (!check_only_error_first || /err/.test(args[args.length - 1].params[0].name));
 }
 
 function replaceNodeCallback(node) {
@@ -142,6 +160,8 @@ function replaceNodeCallback(node) {
         "arguments": callbackToThenArguments(callback)
     };
     new_result.$track = old_callee_backup;
+    //console.dir(func.$parent)
+    new_result.$parent = func.$parent;
     new_result.$track.$arg_length = func.arguments.length;
     return new_result;
 }
@@ -202,14 +222,17 @@ function getErrorHandler(callback, errorArg) {
 
 function thenFlattener(node) {
     setParent(node);
+
     if(node.$track)
     {
+        console.log('going to get block')
+        //console.log(print_node(node))
         var block = getEnclosingBlock(node);
         var synth_node = synthesizeNode(node.$track);
+        console.log('going to add...')
         block.body.unshift(synth_node);
     }
-    if (isThenCallWithThenCallAsLastStatement(node)) {
-
+    if (flatten_chains && isThenCallWithThenCallAsLastStatement(node)) {
         var resolvedFn = node.arguments[0];
         var body = resolvedFn.body.body;
         var lastStatement = body[body.length - 1];
@@ -263,7 +286,7 @@ function thenFlattener(node) {
             argument: functionCall
         };
 
-
+        var temp = node.$parent;
         // Wrap the outer function call in a MemberExpression, so that we can
         // call then(thenArguments) on the result (which is the return value,
         // which is the return value of functionCall)
@@ -280,6 +303,8 @@ function thenFlattener(node) {
             },
             arguments: thenArguments
         };
+
+        new_result.$parent = temp;
 
         return thenFlattener(new_result);
     } else {
@@ -364,7 +389,6 @@ var convert = function (code) {
 };
 
 function setParent(node) {
-    //console.dir('setting parent')
     for (var k in node) {
         if (!node.hasOwnProperty(k))
             continue;
@@ -393,6 +417,7 @@ function setParent(node) {
 
 // Returns the block or program immediately enclosing the given node, possibly the node itself.
 function getEnclosingBlock(node) {
+    //print_node_info(node);
     while  (node.type !== 'BlockStatement' &&
     node.type !== 'Program') {
         node = node.$parent;
