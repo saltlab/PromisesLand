@@ -93,7 +93,7 @@ function hasNodeCallback(node) {
     return node.type === "CallExpression" &&
         args.length &&
         args[args.length - 1].type === "FunctionExpression" &&
-        args[args.length - 1].params.length <= 4 && args[args.length - 1].params.length != 0 && (!check_only_error_first || /err/.test(args[args.length - 1].params[0].name));
+        args[args.length - 1].params.length <= 4 && (args[args.length - 1].params.length != 0 && (!check_only_error_first || /err/.test(args[args.length - 1].params[0].name))|| args[args.length - 1].params.length == 0);
 }
 
 function replaceNodeCallback(node) {
@@ -170,8 +170,9 @@ function callbackToThenArguments(callback) {
     var thenArgs = [callback];
 
     var errorArg = callback.params.shift();
-
-    var errback = getErrorHandler(callback, errorArg);
+    if(errorArg) {
+        var errback = getErrorHandler(callback, errorArg);
+    }
     if (errback) {
         thenArgs.push(errback);
     }
