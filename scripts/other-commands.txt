@@ -1,2 +1,5 @@
+# To change delimiter for lines
+export IFS=","
+
 #Do this inside PromisesLand/subject_systems/compatible
 cat ../../data/subject-systems-due-compatible.csv |   while read a b; do npm install "$a@$b" --save; done

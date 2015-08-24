@@ -41,11 +41,12 @@ function search (dir, fullres, project) {
 
             if (stats.isDirectory()) {
                 search(path, fullres, project);
-            } else if (path.indexOf('node_modules') >= 0 || path.indexOf('plugins') >= 0) {
+           //} else if (path.indexOf('node_modules') >= 0 || path.indexOf('plugins') >= 0) {
+           } else if ((path.match(/node_modules/g) || []).length > 1 || path.indexOf('plugins') >= 0) {
                  //console.log('Skipping file: ' + path);
             } else if ((/\.js$/).test(path)) {
-                console.log('Analyzing file: ' + path);
-               // analyze(path, fullres, project);
+              //  console.log('Analyzing file: ' + path);
+                analyze(path, fullres, project);
             } else if ((/package\.json$/).test(path)) {
                 //console.log('dep analyze: ' + path+' : '+project);
                 if (args.pkgs){
@@ -58,3 +59,30 @@ function search (dir, fullres, project) {
         }
     }
 };
+
+function analyze(path) {
+// console.log('Loading.. ' + path);
+var text = fs.readFileSync(path, "utf8");
+var charPerLine = text.length / text.split("\n").length;
+if (charPerLine > 300) {
+ console.log("skipping - probably minified (" + charPerLine + " char/line); "+ path );
+return;
+}
+try {
+var ast = esprima.parse(text, {tolerant: true, loc: true, range: true});
+estraverse.traverse(ast, {
+enter: enter,
+leave: leave
+});
+function enter(node) {
+
+};
+function leave(node) {
+
+};
+}
+catch (e) {
+// pass exception object to error handler
+//console.dir(e);
+}
+}
