@@ -19,7 +19,7 @@ if [ -d $sources_path ]; then
 #    echo "$d"
     #node /Users/keheliya/dev/RoundTrace/stats/stats_dir.js "$d"
     cd "$d"
-    npm install
+    # npm install
     npm test
     cd ..
     done
