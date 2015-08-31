@@ -1,0 +1,25 @@
+{
+  "name": "compatible-package-dummy",
+  "description": "Refactoring Error-First Protocol to Promises",
+  "license": "MIT",
+  "author": "Keheliya Gallaba <keheliya.gallaba@gmail.com>",
+  "version": "0.0.1",
+  "dependencies": {
+    "express-endpoint": "^1.2.11",
+    "gifsockets-server": "^0.38.1",
+    "heroku-bouncer": "^4.0.1",
+    "moonridge": "^0.6.9",
+    "redis_key_overview": "0.0.3",
+    "slack-integrator": "0.0.6",
+    "timbits": "^0.7.3",
+    "tingo-rest": "^1.0.1"
+  },
+  "repository": {},
+  "devDependencies": {},
+  "keywords": [
+    "source",
+    "error-first callbacks",
+    "promises"
+  ],
+  "scripts": {}
+}
