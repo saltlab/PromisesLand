@@ -4,7 +4,6 @@ var escodegen = require("escodegen");
 var estraverse = require("estraverse");
 var escope = require("escope");
 var fs = require("fs");
-var promisify = require("es6-promisify");
 
 ArgumentParser = require('argparse').ArgumentParser;
 
@@ -226,12 +225,13 @@ function thenFlattener(node) {
 
     if(node.$track)
     {
-        console.log('going to get block')
-        //console.log(print_node(node))
         var block = getEnclosingBlock(node);
         var synth_node = synthesizeNode(node.$track);
-        console.log('going to add...')
-        block.body.unshift(synth_node);
+        new_body = [synth_node]
+        var backup = block.body;
+        Array.prototype.push.apply(new_body, backup);
+        block.body = new_body;
+
     }
     if (flatten_chains && isThenCallWithThenCallAsLastStatement(node)) {
         var resolvedFn = node.arguments[0];
@@ -565,5 +565,7 @@ template = 'function(err,data){\n\
                 }'
 var str_replaced = suffix.replace(/g5k3d9/g, template);
 console.log(''+convert_count+' instances converted.');
-//funcsToNodify.forEach(Nodify);
+
+
 console.log(str_replaced);
+console.log(suffix);
