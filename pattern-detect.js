@@ -10,6 +10,46 @@ ArgumentParser = require('argparse').ArgumentParser;
 var funcsToNodify = [];
 var convert_count = 0;
 
+var core_modules = ['assert',
+    'buffer',
+    'child_process',
+    'cluster',
+    'console',
+    'constants',
+    'crypto',
+    'dgram',
+    'dns',
+    'request',
+    'domain',
+    'events',
+    'fs',
+    // 'http',
+    'https',
+    'module',
+    'net',
+    'os',
+    'path',
+    'process',
+    'punycode',
+    'querystring',
+    'readline',
+    'repl',
+    'stream',
+    '_stream_duplex',
+    '_stream_passthrough',
+    '_stream_readable',
+    '_stream_transform',
+    '_stream_writable',
+    'string_decoder',
+    'sys',
+    'timers',
+    'tls',
+    'tty',
+    'url',
+    'util',
+    'vm',
+    'zlib']
+
 var argParser = new ArgumentParser({
     addHelp: true,
     description: 'ACFG generator'
@@ -89,11 +129,33 @@ function callbackReplacer(matcher, replacer, node) {
 
 function hasNodeCallback(node) {
     var args = node.arguments;
-    return node.type === "CallExpression" &&
+    var primary_check = node.type === "CallExpression" &&
         args.length &&
         args[args.length - 1].type === "FunctionExpression" &&
         args[args.length - 1].params.length <= 4 && (args[args.length - 1].params.length != 0 && (!check_only_error_first || /err/.test(args[args.length - 1].params[0].name))|| args[args.length - 1].params.length == 0);
+
+        return primary_check && isAsync(node);
 }
+
+function isAsync(node) {
+
+    var new_node = {
+        "type": "CallExpression",
+        "callee": node.callee,
+        "arguments": []
+    };
+    var old_id = print_node(new_node).slice(0, -2);
+
+        console.log('async call detected:'+old_id);
+
+        pre = old_id.substr(0, old_id.lastIndexOf("."));
+        console.log(pre)
+        inthelist = new RegExp(core_modules.join("|")).test(pre);
+        hasnameasync = !(/Sync$/).test(old_id);
+        console.log (inthelist+':' + hasnameasync)
+    return (inthelist && hasnameasync);
+
+    }
 
 function replaceNodeCallback(node) {
     console.log('going to replace...');
@@ -568,4 +630,4 @@ console.log(''+convert_count+' instances converted.');
 
 
 console.log(str_replaced);
-console.log(suffix);
+//console.log(suffix);
