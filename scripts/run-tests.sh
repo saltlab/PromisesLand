@@ -14,6 +14,7 @@ project_list_path="$HOME/dev/PromisesLand/data/subject-systems-due-${type}-passi
 cd $ss_path
 while read p; do
 cd $p
+npm install
 npm test
 cd ..
 done <$project_list_path

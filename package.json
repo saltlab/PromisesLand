@@ -24,5 +24,7 @@
     "error-first callbacks",
     "promises"
   ],
-  "scripts": {}
+  "scripts": {
+    "test": "mocha"
+  }
 }
