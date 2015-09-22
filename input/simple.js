@@ -20,10 +20,10 @@ function getUserDetails(user, cb){
 getUserDetails(name, function (err, details) {
 
 	if(err) {
-		/* Success handler. */
+		/* Error handler. */
 		console.log(err);
 	} else {
-		/* Error handler. */
+		/* Success handler. */
     console.log(details);
 	}
 
