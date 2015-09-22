@@ -24,7 +24,7 @@
     "loopback-explorer": "1.6.4",
     "moby": "1.1.1",
     "monami": "0.0.21",
-    "mongoose-epxress-resource": "0.1.2",
+    "mongoose-express-resource": "0.1.2",
     "nodebootstrap-server": "1.1.2",
     "oauth-express": "0.0.1",
     "public-server": "2.0.1",
