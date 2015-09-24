@@ -1,10 +1,7 @@
 var fs = require("fs");
-
-ArgumentParser = require('argparse').ArgumentParser;
+var ArgumentParser = require('argparse').ArgumentParser;
 
 var converter = require('./lib/converter');
-
-var funcsToNodify = [];
 var convert_count = 0;
 
 
@@ -72,7 +69,7 @@ var text = fs.readFileSync(path, "utf8");
 
 var output = converter.refactorPromises(text);
 
-console.log(''+convert_count+' instances converted.');
+console.log('' + convert_count + ' instances converted.');
 
 
 console.log(output);
