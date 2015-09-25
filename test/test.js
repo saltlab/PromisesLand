@@ -12,8 +12,8 @@ describe('Basic', function() {
 		it('the refactored code should match the expected', function() {
 
 			/* Get the file names. */
-			var original = fs.readFileSync("./input/simplified/simple.js");
-			var expected = fs.readFileSync("./input/simplified/simple-refactored.js");
+			var original = fs.readFileSync("./input/simple.js");
+			var expected = fs.readFileSync("./input/simple-refactored.js");
 		
 			/* Run the refactoring on the file. */
 			var actual = converter.refactorPromises(original);
