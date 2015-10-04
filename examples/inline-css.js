@@ -1,5 +1,6 @@
 /*Example taken from https://github.com/jonkemp/inline-css/pull/6/files*/
 function inlineContent(src, options, callback) {
+
     assert.ok(options.url, 'options.url is required');
     extractCss(src, options, function (err, html, css) {
         if (err) {
@@ -8,7 +9,14 @@ function inlineContent(src, options, callback) {
 
         css  = '...'
 
-        inlineCssWithCb(html, css, options, callback);
+        try {
+            var content = inlineCss(html, css, options);
+            callback(null, content);
+        } catch (err) {
+            callback(err);
+        }
+
+
     });
 }
 
@@ -30,14 +38,14 @@ module.exports = function (html, options, callback) {
 
 
 
-
-function inlineCssWithCb(html, css, options, callback) {
-    var content;
-
-    try {
-        content = inlineCss(html, css, options);
-        callback(null, content);
-    } catch (err) {
-        callback(err);
-    }
-}
+//
+//function inlineCssWithCb(html, css, options, callback) {
+//    var content;
+//
+//    try {
+//        content = inlineCss(html, css, options);
+//        callback(null, content);
+//    } catch (err) {
+//        callback(err);
+//    }
+//}
