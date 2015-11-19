@@ -13,6 +13,8 @@
     "escope": "~0.0.13",
     "esprima": "~1.0.2",
     "estraverse": "~0.0.4",
+    "minimist": "^1.2.0",
+    "tern": "^0.16.0",
     "winston": "^1.0.1"
   },
   "devDependencies": {

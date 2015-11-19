@@ -16,7 +16,7 @@ describe('Basic', function() {
 			var expected = fs.readFileSync("./input/simple-refactored.js");
 		
 			/* Run the refactoring on the file. */
-			var actual = converter.refactorPromises(original);
+			var actual = converter.refactorPromises(original,{func_name_suffix:'Promised'});
 
 			/* Check the refactoring is correct. */
 			winston.info('\n--------\nActual Output:\n--------\n'+actual);
