@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>PromisesLand</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <link rel="stylesheet" href="./bootstrap.css" media="screen">
+    <link rel="stylesheet" href="./css/bootswatch.min.css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="../bower_components/html5shiv/dist/html5shiv.js"></script>
+    <script src="../bower_components/respond/dest/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a href="./" class="navbar-brand">PromisesLand</a>
+            <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar-main">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="#downloads">Downloads</a>
+                </li>
+                <li>
+                    <a href="#subject-systems">Subject Systems</a>
+                </li>
+                <li>
+                    <a href="https://github.com/saltlab/PromisesLand">Source Code</a>
+                </li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="http://salt.ece.ubc.ca/" target="_blank">SaltLab @ UBC</a></li>
+            </ul>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-8 col-md-7 col-sm-6">
+                <h1>To the Promises Land:</h1>
+
+                <p class="lead">Refactoring Asynchrony in JavaScript</p>
+
+                <p> This work is under submission at ECOOP 2016
+
+                <p>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div>
+                <div>
+                    <h2>Abstract</h2>
+
+                    <p>JavaScript is a widely used programming language that makes extensive
+                        use of asynchronous computation, particularly in the form of
+                        <em>asynchronous callbacks</em>. These callbacks are used in modern
+                        JavaScript applications to handle tasks, from GUI events to network messages, in a non-blocking
+                        fashion. Asynchronous callbacks present
+                        developers with two challenges. First, JavaScript’s try/catch
+                        error-handling mechanism is not sufficient for proper error handling
+                        in asynchronous contexts. In response, the JavaScript community has
+                        come to rely on the <em>error-first protocol</em>, an informal
+                        programming idiom that is not enforced or checked by the
+                        JavaScript runtime. Second, JavaScript callbacks are frequently
+                        nested, making them difficult to handle (also known as callback hell). Fortunately, a recent
+                        language extension called <em>promises</em> provides an alternative to
+                        asynchronous callbacks. The adoption of promises, however, has been slow as
+                        refactoring existing code to use promises is a complex task.</p>
+
+                    <p>In this paper we present a set of program analysis techniques to
+                        detect instances of asynchronous callbacks and to refactor such callbacks,
+                        including callbacks with the error-first protocol, into promises. We implement our techniques in
+                        a tool called <strong>PromisesLand</strong>. We perform a manual analysis of
+                        four JavaScript applications to evaluate the tool’s precision and recall,
+                        which are, on average, 100% and 83%, respectively. We evaluate <strong>PromisesLand</strong> on
+                        21 large JavaScript applications, and find that <strong>PromisesLand</strong> (1) correctly
+                        refactors callbacks to promises, (2)
+                        outperforms a recent related refactoring technique, and (3) runs in under three seconds
+                        on all of our evaluation targets.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading" id="downloads">Downloads</div>
+                <div class="panel-body">
+                    <p> Full dataset can be downloaded from here:</p>
+
+                    <p><a href="results/promisesland_full_dataset.zip" class="btn btn-primary">Download Data</a></p>
+
+                    <p><br></p>
+
+                    <p> Source code used to analyze the subject systems can be accessed here:</p>
+
+                    <p><a href="https://github.com/saltlab/PromisesLand" class="btn btn-primary">Source Code</a></p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!--<div class="row">-->
+    <!--<div class="col-lg-12">-->
+    <!--<div class="page-header">-->
+    <!--<h1 id="data">Data</h1>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+
+    <!--<div class="row">-->
+    <!--<div class="col-lg-12">-->
+    <!--<h2 id="raw_data">Raw Data</h2>-->
+    <!--<div class="bs-component">-->
+    <!--<p><a href="results/raw_data.zip" class="btn btn-primary">Download</a> Full dataset can be-->
+    <!--downloaded from here.</p>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+
+    <!--<div class="row">-->
+    <!--<div class="col-lg-12">-->
+    <!--<h2 id="extreme_examples">Extreme Nesting examples</h2>-->
+    <!--<div class="bs-component">-->
+    <!--<p><a href="results/extreme_examples.zip" class="btn btn-primary">Download</a> 29 Examples of nesting-->
+    <!--with the highest depth of 8 we found among the test subjects can be downloaded here.</p>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="page-header">
+                <!--<h1 id="subject-systems">Subject Systems</h1>-->
+            </div>
+
+            <div>
+                <h2 id="subject-systems">Subject Systems</h2>
+
+                <p>This set of subject systems consist of 21 Node.js modules and is expected to be representative of a
+                    majority of commonly used JavaScript modules. </p>
+
+                <table class="table table-striped table-hover ">
+                    <thead><tr><th>	#	</th><th>	Project Name	</th><th>	Release	</th><th>			URL	</th></tr></thead><tbody>
+                <tr><td>	1	</td><td>	heroku-bouncer	</td><td>	4.0.1	</td><td><a href="	https://www.npmjs.com/package/heroku-bouncer	"> 	https://www.npmjs.com/package/heroku-bouncer	</a></td></tr>
+                <tr><td>	2	</td><td>	redis-key-overview	</td><td>	0.0.3	</td><td><a href="	https://www.npmjs.com/package/redis-key-overview	"> 	https://www.npmjs.com/package/redis-key-overview	</a></td></tr>
+                <tr><td>	3	</td><td>	slack-integrator	</td><td>	0.0.6	</td><td><a href="	https://www.npmjs.com/package/slack-integrator	"> 	https://www.npmjs.com/package/slack-integrator	</a></td></tr>
+                <tr><td>	4	</td><td>	timbits	</td><td>	0.7.3	</td><td><a href="	https://www.npmjs.com/package/timbits	"> 	https://www.npmjs.com/package/timbits	</a></td></tr>
+                <tr><td>	5	</td><td>	tingo-rest	</td><td>	1.0.1	</td><td><a href="	https://www.npmjs.com/package/tingo-rest	"> 	https://www.npmjs.com/package/tingo-rest	</a></td></tr>
+                <tr><td>	6	</td><td>	brokowski	</td><td>	0.1.8	</td><td><a href="	https://www.npmjs.com/package/brokowski	"> 	https://www.npmjs.com/package/brokowski	</a></td></tr>
+                <tr><td>	7	</td><td>	costa	</td><td>	0.5.0	</td><td><a href="	https://www.npmjs.com/package/costa	"> 	https://www.npmjs.com/package/costa	</a></td></tr>
+                <tr><td>	8	</td><td>	express-device	</td><td>	0.3.11	</td><td><a href="	https://www.npmjs.com/package/express-device	"> 	https://www.npmjs.com/package/express-device	</a></td></tr>
+                <tr><td>	9	</td><td>	flair-doc	</td><td>	0.1.0	</td><td><a href="	https://www.npmjs.com/package/flair-doc	"> 	https://www.npmjs.com/package/flair-doc	</a></td></tr>
+                <tr><td>	10	</td><td>	http-test-servers	</td><td>	0.0.12	</td><td><a href="	https://www.npmjs.com/package/http-test-servers	"> 	https://www.npmjs.com/package/http-test-servers	</a></td></tr>
+                <tr><td>	11	</td><td>	jellyjs-plugin-httpserver	</td><td>	0.0.8	</td><td><a href="	https://www.npmjs.com/package/jellyjs-plugin-httpserver	"> 	https://www.npmjs.com/package/jellyjs-plugin-httpserver	</a></td></tr>
+                <tr><td>	12	</td><td>	loopback-angular-cli	</td><td>	1.1.1	</td><td><a href="	https://www.npmjs.com/package/loopback-angular-cli	"> 	https://www.npmjs.com/package/loopback-angular-cli	</a></td></tr>
+                <tr><td>	13	</td><td>	loopback-explorer	</td><td>	1.6.4	</td><td><a href="	https://www.npmjs.com/package/loopback-explorer	"> 	https://www.npmjs.com/package/loopback-explorer	</a></td></tr>
+                <tr><td>	14	</td><td>	moby	</td><td>	1.1.1	</td><td><a href="	https://www.npmjs.com/package/moby	"> 	https://www.npmjs.com/package/moby	</a></td></tr>
+                <tr><td>	15	</td><td>	monami	</td><td>	0.0.21	</td><td><a href="	https://www.npmjs.com/package/monami	"> 	https://www.npmjs.com/package/monami	</a></td></tr>
+                <tr><td>	16	</td><td>	oauth-express	</td><td>	0.0.1	</td><td><a href="	https://www.npmjs.com/package/oauth-express	"> 	https://www.npmjs.com/package/oauth-express	</a></td></tr>
+                <tr><td>	17	</td><td>	public-server	</td><td>	2.0.1	</td><td><a href="	https://www.npmjs.com/package/public-server	"> 	https://www.npmjs.com/package/public-server	</a></td></tr>
+                <tr><td>	18	</td><td>	scrapit	</td><td>	0.0.4	</td><td><a href="	https://www.npmjs.com/package/scrapit	"> 	https://www.npmjs.com/package/scrapit	</a></td></tr>
+                <tr><td>	19	</td><td>	sik	</td><td>	0.0.1	</td><td><a href="	https://www.npmjs.com/package/sik	"> 	https://www.npmjs.com/package/sik	</a></td></tr>
+                <tr><td>	20	</td><td>	sonea	</td><td>	0.0.3	</td><td><a href="	https://www.npmjs.com/package/sonea	"> 	https://www.npmjs.com/package/sonea	</a></td></tr>
+                <tr><td>	21	</td><td>	squirrel-server	</td><td>	0.0.1	</td><td><a href="	https://www.npmjs.com/package/squirrel-server	"> 	https://www.npmjs.com/package/squirrel-server	</a></td></tr></tbody>
+                </table>
+
+            </div>
+            <!-- /example -->
+        </div>
+    </div>
+
+
+</div>
+
+
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="./js/bootstrap.min.js"></script>
+<script src="./js/bootswatch.js"></script>
+</body>
+</html>
