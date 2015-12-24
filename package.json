@@ -6,6 +6,7 @@
   "version": "0.0.1",
   "repository": {},
   "dependencies": {
+    "acorn": "^2.6.4",
     "argparse": "~0.1.15",
     "compare-ast": "^0.2.0",
     "es6-promisify": "^2.0.0",

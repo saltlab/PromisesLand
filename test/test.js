@@ -4,8 +4,8 @@ var fs = require("fs");
 var winston = require('winston');
 var compareAst = require('compare-ast');
 
-/* Test basic refactorings with no third party libraries and no chaining. */
-describe('Basic', function() {
+/* Test wrap-around with no third party libraries and no chaining. */
+describe('Wrap-around', function() {
 
 	/* A contrived example. */
 	describe('simple.js', function() {

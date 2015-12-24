@@ -15,6 +15,45 @@ var argParser = new ArgumentParser({
     description: 'ACFG generator'
 });
 
+var core_modules = ['assert',
+    'buffer',
+    'child_process',
+    'cluster',
+    'console',
+    'constants',
+    'crypto',
+    'dgram',
+    'dns',
+    'domain',
+    'events',
+    'fs',
+    'http',
+    'https',
+    'module',
+    'net',
+    'os',
+    'path',
+    'process',
+    'punycode',
+    'querystring',
+    'readline',
+    'repl',
+    'stream',
+    '_stream_duplex',
+    '_stream_passthrough',
+    '_stream_readable',
+    '_stream_transform',
+    '_stream_writable',
+    'string_decoder',
+    'sys',
+    'timers',
+    'tls',
+    'tty',
+    'url',
+    'util',
+    'vm',
+    'zlib']
+
 argParser.addArgument(
     ['-d', '--directory'],
     {
@@ -158,6 +197,11 @@ function print_node_info(node, path) {
     if ((/\.forEach$/).test(old_id) || (/\.map$/).test(old_id) || (/\.on$/).test(old_id) || (/app\./).test(old_id)) {
 
     } else {
+
+        if (new RegExp(core_modules.join("|")).test(old_id) && !(/Sync$/).test(old_id)){
+            console.log('core async call detected');
+        }
+    
         console.log(old_id);
         instanceCount++;
         if (dirResults[path]) {

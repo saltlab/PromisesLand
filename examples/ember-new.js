@@ -8,7 +8,7 @@ App.ApplicationRoute = Ember.Route.extend({
 
   model: function(){
     var model = App.GoogleFile.create({
-      id: $('meta[name="google-folder-id"]').attr('content');,
+      id: $('meta[name="google-folder-id"]').attr('content'),
       children: Ember.ArrayProxy.create({content: []})
     });
 
